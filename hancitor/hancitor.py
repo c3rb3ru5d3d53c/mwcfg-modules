@@ -3,38 +3,33 @@ import collections
 import hashlib
 import logging
 import math
-
 import malduck
-
 from malduck.extractor import Extractor
 from malduck.pe import PE
 
 log = logging.getLogger(__name__)
 
-__author__ = "myrtus0x0"
+__author__  = "myrtus0x0"
 __version__ = "1.0.0"
-
 
 class Hancitor(Extractor):
     """
     Hancitor C2s and Campaign ID Extractor
     """
 
-    family = 'hancitor'
+    family     = 'hancitor'
     yara_rules = 'hancitor',
 
     @staticmethod
     def estimate_shannon_entropy(data):
         m = len(data)
         bases = collections.Counter([tmp_base for tmp_base in data])
-
         shannon_entropy_value = 0
         for base in bases:
             n_i = bases[base]
             p_i = n_i / float(m)
             entropy_i = p_i * (math.log(p_i, 2))
             shannon_entropy_value += entropy_i
-
         return shannon_entropy_value * -1
 
     @staticmethod
@@ -64,16 +59,13 @@ class Hancitor(Extractor):
                 section_data = section.get_data()
                 raw_rc4_key = section_data[16:24]
                 crypted_data = section_data[24:24 + 8192]
-
         if raw_rc4_key is None or crypted_data is None:
             log.error("unable to find .data section")
             return
         log.info("key: %s" % binascii.hexlify(raw_rc4_key))
         flags = 0x280011
         key_length = int((flags >> 16) / 8)
-
         raw_hash = hashlib.sha1(raw_rc4_key).digest()[:key_length]
-
         log.info("len of encrypted data: %s, decrypting with %s" % (len(crypted_data), binascii.hexlify(raw_hash)))
         decrypted = malduck.rc4(raw_hash, crypted_data)
         entropy = self.estimate_shannon_entropy(decrypted)
@@ -81,4 +73,3 @@ class Hancitor(Extractor):
         if entropy < 1:
             conf = self.parse_config(decrypted)
             return conf
-
