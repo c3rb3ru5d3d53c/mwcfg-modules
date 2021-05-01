@@ -7,3 +7,4 @@ To use these modules or contribute try my featureful CLI utility for MalDuck cal
 **Supported Modules:**
 - :heavy_check_mark: Azorult
 - :heavy_check_mark: Citadel
+- :heavy_check_mark: Hancitor
