@@ -15,6 +15,5 @@ class Caliber(Extractor):
 
     @Extractor.string
     def webhooks(self, p, addr, match):
-        # Offset 216451
         if p.memory:
             return {'family': 'caliber', 'webhooks': [p.utf16z(addr)]}
