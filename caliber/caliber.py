@@ -10,10 +10,15 @@ __version__ = "1.0.0"
 
 class Caliber(Extractor):
 
-    family     = 'caliber'
+    family     = '44caliber'
     yara_rules = ('caliber',)
 
     @Extractor.string
     def webhooks(self, p, addr, match):
-        if p.memory:
-            return {'family': 'caliber', 'webhooks': [p.utf16z(addr)]}
+        try:
+            webhook_len = (p.uint8v(addr-2) * 2) - 16
+            data = p.readp(offset=addr, length=webhook_len)
+            webhook = data.decode('utf-16')
+            return {'family': '44caliber', 'webhooks': [webhook]}
+        except Exception as error:
+            log.warning(error)
