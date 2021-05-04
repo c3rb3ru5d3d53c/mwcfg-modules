@@ -3,6 +3,9 @@ from malduck.extractor import Extractor
 from malduck.pe import MemoryPEData
 from malduck import rc4
 
+# A Code Cleanup / Port of kevoreilly's ZLoader Configuration to Malduck
+# https://github.com/kevoreilly/CAPEv2/blob/master/modules/processing/parsers/mwcp/Zloader.py
+
 log = logging.getLogger(__name__)
 
 __author__  = "c3rb3ru5"

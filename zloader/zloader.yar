@@ -3,6 +3,7 @@ rule zloader {
         author      = "c3rb3ru5"
         description = "ZLoader"
         reference   = "https://malpedia.caad.fkie.fraunhofer.de/details/win.zloader"
+        reference   = "https://github.com/kevoreilly/CAPEv2/blob/master/modules/processing/parsers/mwcp/Zloader.py"
         hash        = "69710e08b572faca056f4410a545aae0"
         type        = "malware.loader"
         created     = "2021-05-04"
