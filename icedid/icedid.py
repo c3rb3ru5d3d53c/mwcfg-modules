@@ -3,7 +3,6 @@ import logging
 from malduck.extractor import Extractor
 from malduck.pe import MemoryPEData
 from malduck.pe import PE
-
 log = logging.getLogger(__name__)
 
 __author__  = "4rchib4ld"
@@ -18,7 +17,8 @@ class IcedID(Extractor):
     family     = 'IcedID'
     yara_rules = 'icedid',
 
-    def extractPayload(p):
+    @staticmethod
+    def extractPayload(p, count, xorKeyCount):
         # Extracting the payload from the .data section
         MAX_STRING_SIZE = 128
         for section in p.sections:
@@ -28,11 +28,18 @@ class IcedID(Extractor):
                 return payload  
 
     @Extractor.extractor
-    def ref_c2(self, p):
+    def obfuscationCode(self, p, addr):
         pe_rep = PE(data=p)
-        payload = extractPayload(pe_rep)
+        payload = self.extractPayload(pe_rep)
         decrypted = ""
         for i in range(32):
-            decrypted += chr(payload[i+64] ^ payload[i])
+            try:
+                decrypted += chr(payload[i+64] ^ payload[i])
+            except IndexError:
+                pass
         c2 = decrypted.split("\x00")[0]
-        return c2
+        config = {
+            'family': self.family,
+            'url': c2
+        }
+        return config

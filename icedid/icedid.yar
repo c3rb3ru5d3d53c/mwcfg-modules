@@ -1,7 +1,9 @@
-rule IcedID
+rule icedid
 {
   strings:
-      $obfCode = {8A 44 11 40 32 04 11 88 44 0D 07 48 FF C1}
+      $amazon = "aws.amazon.com" nocase wide ascii
+      $gadsCookie = "Cookie: __gads=" nocase wide ascii
+      $obfuscationCode = {8A 44 11 ?? 32 04 11 88 44 0D 07 48 FF C1 48 83 F9 ??}
   condition:
       all of them
 }
