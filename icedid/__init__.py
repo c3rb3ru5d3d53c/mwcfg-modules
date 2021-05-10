@@ -1,1 +1,1 @@
-from .icedid import icedid
+from .icedid import IcedID
