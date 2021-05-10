@@ -9,7 +9,7 @@ log = logging.getLogger(__name__)
 __author__  = "4rchib4ld"
 __version__ = "1.0.0"
 
-class icedid(Extractor):
+class IcedID(Extractor):
 
     """
     IcedID C2 Domain Configuration Extractor
