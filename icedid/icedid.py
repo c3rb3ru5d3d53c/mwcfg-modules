@@ -1,33 +1,33 @@
 import logging
 
 from malduck.extractor import Extractor
-from malduck.pe import MemoryPEData
 from malduck.pe import PE
-from malduck import disasm
-from icecream import ic
+from malduck import asciiz
+
 log = logging.getLogger(__name__)
 
 __author__  = "4rchib4ld"
 __version__ = "1.0.0"
 
-class IcedID(Extractor):
+class icedid(Extractor):
 
     """
     IcedID C2 Domain Configuration Extractor
     """
 
-    family     = 'IcedID'
+    family     = 'icedid'
     yara_rules = 'icedid',
 
     @staticmethod
-    def extractPayload(p):
-        # Extracting the payload from the .data section
-        MAX_STRING_SIZE = 128
-        for section in p.sections:
+    def extractPayload(pe):
+        """
+        Extracting the payload from the .data section
+        """
+        for section in pe.sections:
             if ".data" in str(section.Name):
                 data = section.get_data()
-                payload = data[4:MAX_STRING_SIZE].split(b"\0")[0]
-                return payload  
+                payload = asciiz(data[4:])
+                return payload
 
     @Extractor.rule
     def icedid(self, p, matches):
@@ -36,15 +36,15 @@ class IcedID(Extractor):
         countValue = obfuscationCode[-1]
         pe_rep = PE(data=p)
         payload = self.extractPayload(pe_rep)
-        decrypted = ""
+        decrypted = bytearray()
         for i in range(countValue):
             try:
-                decrypted += chr(payload[i + xorCountValue] ^ payload[i])
+                decrypted.append(payload[i + xorCountValue] ^ payload[i])
             except IndexError:
                 pass
-        c2 = decrypted.split("\x00")[0]
+        c2 = asciiz(decrypted)
         config = {
             'family': self.family,
-            'url': c2
+            'url': c2.decode()
         }
         return config
