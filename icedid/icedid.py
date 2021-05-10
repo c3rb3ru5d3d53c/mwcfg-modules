@@ -45,6 +45,6 @@ class icedid(Extractor):
         c2 = asciiz(decrypted)
         config = {
             'family': self.family,
-            'url': c2.decode()
+            'urls': [c2.decode()]
         }
         return config
