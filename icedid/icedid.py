@@ -43,8 +43,9 @@ class IcedID(Extractor):
             except IndexError:
                 pass
         c2 = asciiz(decrypted)
-        config = {
-            'family': self.family,
-            'urls': [c2.decode()]
-        }
-        return config
+        if len(c2) > 0:
+            return {
+                'family': self.family,
+                'urls': [c2.decode('utf-8')]
+            }
+        return None
