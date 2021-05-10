@@ -3,7 +3,7 @@ rule icedid
   meta:
       author      = "4rchib4ld"
       description = "IcedID PhotoLoader"
-      hash        = "afe6234fb22b73ce9241d9428e4a3d7f"
+      hash        = "0321aea38c3eeae272549f306caaa97a"
       reference   = "https://4rchib4ld.github.io/blog/IcedIDOnMyNeckImTheCoolest/"
       type        = "malware.downloader"
       created     = "2021-05-10"
