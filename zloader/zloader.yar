@@ -1,6 +1,8 @@
 rule zloader {
     meta:
-        author      = "c3rb3ru5"
+        author      = "Felix Bilstein"
+        source      = "Malpedia"
+        license     = "CC BY-SA 4.0"
         description = "ZLoader"
         reference   = "https://malpedia.caad.fkie.fraunhofer.de/details/win.zloader"
         reference   = "https://github.com/kevoreilly/CAPEv2/blob/master/modules/processing/parsers/mwcp/Zloader.py"
@@ -57,6 +59,6 @@ rule zloader {
     condition:
         uint16(0) == 0x5A4D and
         filesize < 1105920 and
-        7 of ($sequence_*) and 
+        7 of ($sequence_*) and
         $decrypt_conf
 }
