@@ -15,8 +15,8 @@ class IcedIDPELoader(Extractor):
     IcedID PELoader Config Extractor
     """
 
-    family = 'icedidpeloader'
-    yara_rules = 'icedid_peloader',
+    family = 'icedid_peloader'
+    yara_rules = ('icedid_peloader',)
 
     @staticmethod
     def entropy(data):

@@ -1,5 +1,4 @@
-rule icedid
-{
+rule icedid_photoloader {
   meta:
       author      = "4rchib4ld"
       description = "IcedID PhotoLoader"
@@ -11,7 +10,7 @@ rule icedid
       tlp         = "white"
       rev         = 1
   strings:
-    $obfuscationCode = {8A 44 11 ?? 32 04 11 88 44 0D 07 48 FF C1 48 83 F9 ??} 
+    $obfuscationCode = {8A 44 11 ?? 32 04 11 88 44 0D 07 48 FF C1 48 83 F9 ??}
     $s1       =  "_gat="   ascii wide
     $s2       = "_ga="    ascii wide
     $s3       = "_u="     ascii wide

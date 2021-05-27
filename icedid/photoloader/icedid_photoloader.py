@@ -9,14 +9,14 @@ log = logging.getLogger(__name__)
 __author__  = "4rchib4ld"
 __version__ = "1.0.0"
 
-class IcedID(Extractor):
+class IcedIDPhotoLoader(Extractor):
 
     """
-    IcedID C2 Domain Configuration Extractor
+    IcedID PhotoLoader C2 Domain Configuration Extractor
     """
 
-    family     = 'icedid'
-    yara_rules = 'icedid',
+    family     = 'icedid_photoloader'
+    yara_rules = ('icedid_photoloader',)
 
     @staticmethod
     def extractPayload(pe):
@@ -30,7 +30,7 @@ class IcedID(Extractor):
                 return payload
 
     @Extractor.rule
-    def icedid(self, p, matches):
+    def icedid_photoloader(self, p, matches):
         obfuscationCode = matches.elements["obfuscationCode"][0][2]
         xorCountValue = obfuscationCode[3] ## Getting this values dynamically because... you never know
         countValue = obfuscationCode[-1]

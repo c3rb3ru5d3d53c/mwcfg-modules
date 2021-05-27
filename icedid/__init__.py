@@ -1,1 +1,2 @@
-from .icedid import IcedID
+from .photoloader import IcedIDPhotoLoader
+from .peloader import IcedIDPELoader
