@@ -1,5 +1,6 @@
 import logging
 import base64
+import requests
 from malduck.extractor import Extractor
 from Crypto.Cipher import AES
 from Crypto.Protocol.KDF import PBKDF2
@@ -73,4 +74,13 @@ class ASyncRAT(Extractor):
             'mutex': self.decrypt_config_item(key, data, 8),
             'pastebin': self.decrypt(key, base64.b64decode(data[12][1:])).encode('ascii').replace(b'\x0f', b'')
         }
+        if config['pastebin'] != 'null':
+            try:
+                r = requests.get(url=config['pastebin'])
+                if r.status_code == 200:
+                    data = r.content.split(b'\x3a')
+                    config['host'] = data[0].decode('ascii', 'ignore')
+                    config['port'] = data[1].decode('ascii', 'ignore')
+            except Exception as error:
+                log.error(error)
         return config
