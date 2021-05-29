@@ -1,3 +1,4 @@
+import string
 import logging
 import base64
 import requests
@@ -47,13 +48,19 @@ class ASyncRAT(Extractor):
                 return False
             return plaintext
         except Exception as error:
-            log.error(error)
+            log.warning(error)
             return ''
 
     @staticmethod
     def get_wide_string(data, index):
         data = data[index][1:] + b'\x00'
         return data.decode('utf-16')
+
+    def decrypt_config_item_ports(self, key, data, index):
+        result =  ''.join(filter(lambda x: x in string.printable, self.decrypt(key, base64.b64decode(data[index][1:]))))
+        if result == 'null':
+            return []
+        return result.split(',')
 
     @Extractor.extractor('magic_cslr_0')
     def asyncrat(self, p, addr):
@@ -66,7 +73,7 @@ class ASyncRAT(Extractor):
         config = {
             'family': self.family,
             'host': self.decrypt_config_item(key, data, 2),
-            'port': self.decrypt_config_item(key, data, 1),
+            'ports': self.decrypt_config_item_ports(key, data, 1),
             'version': self.decrypt_config_item(key, data, 3),
             'install_folder': self.get_wide_string(data, 5),
             'install_file': self.get_wide_string(data, 6),
@@ -80,7 +87,7 @@ class ASyncRAT(Extractor):
                 if r.status_code == 200:
                     data = r.content.split(b'\x3a')
                     config['host'] = data[0].decode('ascii', 'ignore')
-                    config['port'] = data[1].decode('ascii', 'ignore')
+                    config['ports'] = [data[1].decode('ascii', 'ignore')]
             except Exception as error:
-                log.error(error)
+                log.warning(error)
         return config
