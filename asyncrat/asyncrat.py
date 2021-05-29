@@ -71,6 +71,6 @@ class ASyncRAT(Extractor):
             'install_file': self.get_wide_string(data, 6),
             'install': self.decrypt_config_item(key, data, 4),
             'mutex': self.decrypt_config_item(key, data, 8),
-            'pastebin': self.decrypt_config_item(key, data, 12)
+            'pastebin': self.decrypt(key, base64.b64decode(data[12][1:])).encode('ascii').replace(b'\x0f', b'')
         }
         return config
