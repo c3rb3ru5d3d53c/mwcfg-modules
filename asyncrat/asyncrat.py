@@ -39,17 +39,13 @@ class ASyncRAT(Extractor):
         return data[index][1:].decode('utf-8', 'ignore')
 
     def decrypt_config_item(self, key, data, index):
-        try:
-            data = base64.b64decode(self.get_string(data, index))
-            plaintext = self.decrypt(key, data)
-            if plaintext.lower() == 'true':
-                return True
-            if plaintext.lower() == 'false':
-                return False
-            return plaintext
-        except Exception as error:
-            log.warning(error)
-            return ''
+        data = base64.b64decode(self.get_string(data, index))
+        plaintext = self.decrypt(key, data)
+        if plaintext.lower() == 'true':
+            return True
+        if plaintext.lower() == 'false':
+            return False
+        return plaintext
 
     @staticmethod
     def get_wide_string(data, index):
@@ -64,30 +60,34 @@ class ASyncRAT(Extractor):
 
     @Extractor.extractor('magic_cslr_0')
     def asyncrat(self, p, addr):
-        strings_offset = p.uint32v(addr+0x40)
-        strings_size = p.uint32v(addr+0x44)
-        data = p.readv(addr+strings_offset, strings_size)
-        data = data.split(b'\x00\x00')
-        key = base64.b64decode(self.get_string(data, 7))
-        log.debug('extracted key: ' + str(key))
-        config = {
-            'family': self.family,
-            'host': self.decrypt_config_item(key, data, 2),
-            'ports': self.decrypt_config_item_ports(key, data, 1),
-            'version': self.decrypt_config_item(key, data, 3),
-            'install_folder': self.get_wide_string(data, 5),
-            'install_file': self.get_wide_string(data, 6),
-            'install': self.decrypt_config_item(key, data, 4),
-            'mutex': self.decrypt_config_item(key, data, 8),
-            'pastebin': self.decrypt(key, base64.b64decode(data[12][1:])).encode('ascii').replace(b'\x0f', b'')
-        }
-        if config['pastebin'] != 'null':
-            try:
-                r = requests.get(url=config['pastebin'])
-                if r.status_code == 200:
-                    data = r.content.split(b'\x3a')
-                    config['host'] = data[0].decode('ascii', 'ignore')
-                    config['ports'] = [data[1].decode('ascii', 'ignore')]
-            except Exception as error:
-                log.warning(error)
-        return config
+        try:
+            strings_offset = p.uint32v(addr+0x40)
+            strings_size = p.uint32v(addr+0x44)
+            data = p.readv(addr+strings_offset, strings_size)
+            data = data.split(b'\x00\x00')
+            key = base64.b64decode(self.get_string(data, 7))
+            log.debug('extracted key: ' + str(key))
+            config = {
+                'family': self.family,
+                'host': self.decrypt_config_item(key, data, 2),
+                'ports': self.decrypt_config_item_ports(key, data, 1),
+                'version': self.decrypt_config_item(key, data, 3),
+                'install_folder': self.get_wide_string(data, 5),
+                'install_file': self.get_wide_string(data, 6),
+                'install': self.decrypt_config_item(key, data, 4),
+                'mutex': self.decrypt_config_item(key, data, 8),
+                'pastebin': self.decrypt(key, base64.b64decode(data[12][1:])).encode('ascii').replace(b'\x0f', b'')
+            }
+            if config['pastebin'] != 'null':
+                try:
+                    r = requests.get(url=config['pastebin'])
+                    if r.status_code == 200:
+                        data = r.content.split(b'\x3a')
+                        config['host'] = data[0].decode('ascii', 'ignore')
+                        config['ports'] = [data[1].decode('ascii', 'ignore')]
+                except Exception as error:
+                    log.warning(error)
+            return config
+        except Exception as error:
+            log.warning(error)
+            return None
