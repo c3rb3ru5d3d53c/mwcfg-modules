@@ -52,7 +52,7 @@ class ASyncRAT(Extractor):
         data = data[index][1:] + b'\x00'
         return data.decode('utf-16')
 
-    def decrypt_config_item_ports(self, key, data, index):
+    def decrypt_config_item_list(self, key, data, index):
         result =  ''.join(filter(lambda x: x in string.printable, self.decrypt(key, base64.b64decode(data[index][1:]))))
         if result == 'null':
             return []
@@ -69,8 +69,8 @@ class ASyncRAT(Extractor):
             log.debug('extracted key: ' + str(key))
             config = {
                 'family': self.family,
-                'host': self.decrypt_config_item(key, data, 2),
-                'ports': self.decrypt_config_item_ports(key, data, 1),
+                'hosts': self.decrypt_config_item_list(key, data, 2),
+                'ports': self.decrypt_config_item_list(key, data, 1),
                 'version': self.decrypt_config_item(key, data, 3),
                 'install_folder': self.get_wide_string(data, 5),
                 'install_file': self.get_wide_string(data, 6),
