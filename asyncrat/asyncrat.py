@@ -58,6 +58,10 @@ class ASyncRAT(Extractor):
             return []
         return result.split(',')
 
+    def decrypt_config_item_printable(self, key, data, index):
+        result =  ''.join(filter(lambda x: x in string.printable, self.decrypt(key, base64.b64decode(data[index][1:]))))
+        return result
+
     @Extractor.extractor('magic_cslr_0')
     def asyncrat(self, p, addr):
         try:
@@ -71,11 +75,11 @@ class ASyncRAT(Extractor):
                 'family': self.family,
                 'hosts': self.decrypt_config_item_list(key, data, 2),
                 'ports': self.decrypt_config_item_list(key, data, 1),
-                'version': self.decrypt_config_item(key, data, 3),
+                'version': self.decrypt_config_item_printable(key, data, 3),
                 'install_folder': self.get_wide_string(data, 5),
                 'install_file': self.get_wide_string(data, 6),
-                'install': self.decrypt_config_item(key, data, 4),
-                'mutex': self.decrypt_config_item(key, data, 8),
+                'install': self.decrypt_config_item_printable(key, data, 4),
+                'mutex': self.decrypt_config_item_printable(key, data, 8),
                 'pastebin': self.decrypt(key, base64.b64decode(data[12][1:])).encode('ascii').replace(b'\x0f', b'')
             }
             if config['pastebin'] != 'null':
