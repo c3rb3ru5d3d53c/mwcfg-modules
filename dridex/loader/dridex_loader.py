@@ -1,5 +1,4 @@
 import logging
-from malduck import rc4
 from malduck import ipv4
 from malduck.extractor import Extractor
 
@@ -102,12 +101,8 @@ class DridexLoader(Extractor):
                 log.debug('found c2 ip: ' + str(ip) + ':' + str(port))
                 config['hosts'].append(str(ip) + ':' + str(port))
                 self.c2_rva += 6 + self.delta
-
             if self.botnet_id is not None:
+                log.debug('found botnet_id: ' + str(self.botnet_id))
                 config['botnet_id'] = self.botnet_id
-            # key = p.readv(self.rc4_rva, self.LEN_BLOB_KEY)
-            # ciphertext = p.readv(self.rc4_rva+self.LEN_BLOB_KEY, self.LEN_BOT_KEY)
-            # print(key)
-            #plaintext = rc4()
-
             return config
+        return None
