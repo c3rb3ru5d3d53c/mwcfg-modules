@@ -99,8 +99,11 @@ class DridexLoader(Extractor):
                 ip = ipv4(p.readv(self.c2_rva, 4))
                 port = p.uint16v(self.c2_rva+4)
                 log.debug('found c2 ip: ' + str(ip) + ':' + str(port))
-                config['hosts'].append(str(ip) + ':' + str(port))
+                if ip is not None and port is not None:
+                    config['hosts'].append(str(ip) + ':' + str(port))
                 self.c2_rva += 6 + self.delta
+            if len(config['hosts']) <= 0:
+                return None
             if self.botnet_id is not None:
                 log.debug('found botnet_id: ' + str(self.botnet_id))
                 config['botnet_id'] = self.botnet_id
