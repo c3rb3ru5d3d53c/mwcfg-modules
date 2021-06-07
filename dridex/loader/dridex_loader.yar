@@ -30,9 +30,14 @@ rule dridex_loader {
                       ?? ?? ?? ?? 0F B7 05}
         $rc4_key_1 = {56 52 BA [4] 8B F1 E8 [4] 8B C? 5? C3}
         $rc4_key_2 = {5? 8B ?9 52 [5-6] E8 [4] 8B C? 5? C3}
+        $ip_count_1 = { 0F B6 05 ?? ?? ?? ?? [0-4] 3B F8 }
+        $ip_count_2 = { 8D 05 ?? ?? ?? ?? 0F B7 10 8B CF 52 8D 50 02 }
+        $ip_count_3 = { 66 A1 ?? ?? ?? ?? 0F B7 ?? ?? 68 ?? ?? ?? ?? 8B CE E8 }
     condition:
         uint16(0) == 0x5A4D and
         1 of ($c2parse_*) and
+        1 of ($ip_count_*) and
         ($botnet_id or
          1 of ($rc4_key_*))
+
 }
