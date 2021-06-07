@@ -1,2 +1,12 @@
 venv/**
 __pycache__/
+build/**
+dist/**
+mwcfg.egg-info/**
+samples/**
+azorult/**
+citadel/**
+dridex/**
+uploads/**
+.python-version
+.DS_Store

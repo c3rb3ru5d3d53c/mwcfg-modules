@@ -19,46 +19,40 @@ class DridexLoader(Extractor):
     LEN_BOT_KEY  = 107
     botnet_rva   = None
     botnet_id    = None
+    ip_count     = 0
 
     @Extractor.extractor('c2parse_6')
     def c2parse_6(self, p, addr):
         self.c2_rva = p.uint32v(addr+44)
         self.botnet_rva = p.uint32v(addr-7)
         self.delta = 0
-        self.ip_count = 4
 
     @Extractor.extractor('c2parse_5')
     def c2parse_5(self, p, addr):
         self.c2_rva = p.uint32v(addr+75)
         self.botnet_rva = p.uint32v(addr+3)
         self.botnet_id = p.uint16v(self.botnet_rva)
-        self.num_ips_rva = p.uint32v(addr+18)
-        self.ip_count = p.uint8v(self.num_ips_rva)
         self.delta = 0
 
     @Extractor.extractor('c2parse_4')
     def c2parse_4(self, p, addr):
         self.c2_rva = p.uint32v(addr+6)
         self.delta = 0
-        self.ip_count = 4
 
     @Extractor.extractor('c2parse_3')
     def c2parse_3(self, p, addr):
         self.c2_rva = p.uint32v(addr+60)
         self.delta = 2
-        self.ip_count = 4
 
     @Extractor.extractor('c2parse_2')
     def c2parse_2(self, p, addr):
         self.c2_rva = p.uint32v(addr+47)
         self.delta = 0
-        self.ip_count = 4
 
     @Extractor.extractor('c2parse_1')
     def c2parse_1(self, p, addr):
         self.c2_rva = p.uint32v(addr+27)
         self.delta = 2
-        self.ip_count = 4
 
     @Extractor.extractor('botnet_id')
     def get_botnet_id(self, p, addr):
@@ -79,6 +73,21 @@ class DridexLoader(Extractor):
     def rc4_key_2(self, p, addr):
         self.rc4_rva = self.get_rc4_rva(p, addr)
 
+    @Extractor.extractor('ip_count_1')
+    def ip_count_1(self, p, addr):
+        ip_count_rva = p.uint32v(addr + 3)
+        self.ip_count = p.uint8v(ip_count_rva)
+
+    @Extractor.extractor('ip_count_2')
+    def ip_count_2(self, p, addr):
+        ip_count_rva = p.uint32v(addr + 2)
+        self.ip_count = p.uint8v(ip_count_rva)
+
+    @Extractor.extractor('ip_count_3')
+    def ip_count_3(self, p, addr):
+        ip_count_rva = p.uint32v(addr + 2)
+        self.ip_count = p.uint8v(ip_count_rva)
+
     @staticmethod
     def match_exists(matches, name):
         for element in matches.elements:
@@ -95,6 +104,9 @@ class DridexLoader(Extractor):
                 'hosts': [],
                 'botnet_id': ''
             }
+            if not self.ip_count or self.ip_count > 10:
+                return None
+            log.debug('ip_count: ' + str(self.ip_count))
             for i in range(0, self.ip_count):
                 ip = ipv4(p.readv(self.c2_rva, 4))
                 port = p.uint16v(self.c2_rva+4)
