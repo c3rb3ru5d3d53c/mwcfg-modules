@@ -14,3 +14,4 @@ To use these modules or contribute try my featureful CLI utility for MalDuck cal
 - :heavy_check_mark: IcedID
   - :heavy_check_mark: PhotoLoader
   - :heavy_check_mark: PELoader
+- :heavy_check_mark: Emotet
