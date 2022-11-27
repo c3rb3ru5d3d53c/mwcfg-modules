@@ -8,7 +8,7 @@ from malduck import rc4
 
 log = logging.getLogger(__name__)
 
-__author__  = "c3rb3ru5"
+__author__  = "c3rb3ru5 & zm00"
 __version__ = "1.0.0"
 
 class DarkCloud(Extractor):
