@@ -2,7 +2,6 @@ import logging
 import re
 from malduck.extractor import Extractor
 from malduck.pe import MemoryPEData
-from hexdump import hexdump
 from binascii import unhexlify
 from malduck import rc4
 
