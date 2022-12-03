@@ -3,6 +3,7 @@ import logging
 from malduck.extractor import Extractor
 from malduck.pe import PE
 from malduck import asciiz
+import base64
 import clr
 import dnfile
 import dotnetfile
@@ -19,6 +20,16 @@ class Redline(Extractor):
 
     family     = 'redline'
     yara_rules = ('redline',)
+
+    @staticmethod
+    def decrypt(ciphertext, key):
+        key = key.encode()
+        ciphertext = base64.b64decode(ciphertext)
+        plaintext = []
+        for i in range(0, len(ciphertext)):
+            plaintext.append(ciphertext[i] ^ key[i % len(key)])
+        plaintext = bytes(plaintext).decode('utf-8')
+        return base64.b64decode(plaintext).decode('utf-8')
 
     @Extractor.final
     def string_0(self, p):
