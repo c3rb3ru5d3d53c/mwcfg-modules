@@ -20,8 +20,6 @@ class Redline(Extractor):
 
     family     = 'redline'
     yara_rules = ('redline',)
-    hosts_ciphertext_offset = None
-    key_offset = None
 
     @staticmethod
     def decrypt(ciphertext, key):
@@ -41,20 +39,25 @@ class Redline(Extractor):
 
     @staticmethod
     def get_user_string(data, offset):
-        return (data[offset+1:].split(b'\x00\x00')[0] + b'\x00').decode('utf-16')
+        result = data[offset+1:].split(b'\x00\x00')[0] + b'\x00'
+        if result[0] == 0: return ''
+        return result.decode('utf-16')
 
     @Extractor.extractor('bytecode_0')
     def bytecode_0(self, p, addr):
-        buff = p.readv(addr, 47)
-        hosts_ciphertext_offset = uint32(other=buff[1:1+3] + b'\x00')
-        key_offset = uint32(other=buff[31:31+3] + b'\x00')
+        match_buffer = p.readv(addr, 47)
         pe = DotNetPE(p.readp(0, p.length))
         data = self.get_stream_data(pe, '#US')
-        ciphertext = self.get_user_string(data, hosts_ciphertext_offset)
-        key = self.get_user_string(data, key_offset)
-        hosts = self.decrypt(ciphertext, key).split('|')
+        hosts_ciphertext = self.get_user_string(data, uint32(other=match_buffer[1:1+3] + b'\x00'))
+        key = self.get_user_string(data, uint32(other=match_buffer[31:31+3] + b'\x00'))
+        id_ciphertext = self.get_user_string(data, uint32(other=match_buffer[11:11+3] + b'\x00'))
+        message = self.get_user_string(data, uint32(other=match_buffer[21:21+3] + b'\x00'))
+        hosts = self.decrypt(hosts_ciphertext, key).split('|')
+        id_0 = self.decrypt(id_ciphertext, key)
         return {
             'family': self.family,
-            'hosts': hosts
+            'hosts': hosts,
+            'id': id_0,
+            'message': message
         }
         
