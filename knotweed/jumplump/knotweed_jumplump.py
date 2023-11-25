@@ -5,7 +5,6 @@ import capstone
 from binascii import hexlify
 from malduck import rc4
 from malduck.extractor import Extractor
-from malduck.pe import MemoryPEData
 
 log = logging.getLogger(__name__)
 

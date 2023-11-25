@@ -1,6 +1,5 @@
 import logging
 from malduck.extractor import Extractor
-from malduck.pe import MemoryPEData
 from malduck import rc4
 
 # A Code Cleanup / Port of kevoreilly's ZLoader Configuration to Malduck

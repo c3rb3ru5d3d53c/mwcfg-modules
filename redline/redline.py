@@ -1,12 +1,9 @@
 import logging
 
 from malduck.extractor import Extractor
-from malduck.pe import PE
-from malduck import asciiz
 from malduck import uint32
 import base64
 from dotnetfile import DotNetPE
-from hexdump import hexdump
 
 log = logging.getLogger(__name__)
 
